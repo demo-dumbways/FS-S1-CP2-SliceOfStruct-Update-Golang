@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+        ebook:
+             build: .
+             container_name: fs-s1-cp2-array-of-object
+             image: registry.mejik.xyz/ebook/fs-s1-cp2-array-of-object
+             ports:
+                     - 3024:3000
