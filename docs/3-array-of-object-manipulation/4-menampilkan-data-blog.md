@@ -6,24 +6,24 @@ sidebar_position: 4
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-Menampilkan data pada **Handlebars** kita menggunakan **double curly brackets**, contoh `{{blogs}}`. Karena data yang dikirim adalah semua data blog, maka kita menggunakan `{{each}}` untuk menampilkan semua data blog tersebut. Dan kita menggunakan perintah `this` kemudian diikuti `property name` yang ingin ditampilkan.
+Menampilkan data pada **Template HTML** kita menggunakan **double curly brackets**, contoh `{{.Blogs}}`. Karena data yang dikirim adalah semua data blog, maka kita harus melakukan `looping/perulangan` menggunakan `{{range}}` untuk menampilkan semua data blog tersebut.
 
-**Each** sama halnya seperti looping for yang telah kita pelajari pada chapter satu. Fungsinya sama yakni untuk melakukan eksekusi code secara berulang sejumlah kondisi yang ditentukan.
+**range** sama halnya seperti looping for yang telah kita pelajari pada chapter satu. Fungsinya sama yakni untuk melakukan eksekusi code secara berulang sejumlah kondisi yang ditentukan.
 
 <br />
 
-<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2/tree/day3-3.display-data">
+<a class="btn-example-code" href="">
 Contoh code
 </a>
 
 <br />
 <br />
 
-```html {44-63} title=blog.hbs
+```html {43-66} title="blog.html"
 <html>
 
 <head>
-  <title>Creating Blog Page</title>
+  <title>{{.Data.Title}}</title>
   <link rel="stylesheet" href="/public/style.css" />
   <!-- linking boostrap css cdn  -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -56,14 +56,13 @@ Contoh code
   <!-- Blog list -->
   <div id="contents" class="blog-list">
     <!-- conditional post blog -->
-    {{#if isLogin}}
+    {{if .Data.IsLogin}}
     <div class="button-group w-100">
       <a href="/add-blog" class="btn-post">Add New Blog</a>
     </div>
-    {{/if}}
+    {{end}}
     <!-- dynamic content would be here -->
-    <!-- using each expression to iterate blogs data sent -->
-    {{#each blogs}}
+    {{range $index, $data := .Blogs}}
     <div class="blog-list-item">
       <div class="blog-image">
         <img src="/public/assets/blog-img.png" alt="Pasar Coding di Indonesia Dinilai Masih Menjanjikan" />
@@ -74,17 +73,22 @@ Contoh code
           <a class="btn-post">Delete Blog</a>
         </div>
         <h1>
-          <a href="/blog/{{this.id}}" target="_blank">{{this.title}}</a>
+          <a href="/blog/1" target="_blank">
+            {{$data.Title}}
+          </a>
         </h1>
         <div class="detail-blog-content">
-          {{this.post_date}} | {{this.author}}
+          {{$data.Format_date}} | {{$data.Author}}
         </div>
-        <p>{{this.content}}</p>
+        <p>
+          {{$data.Content}}
+        </p>
       </div>
     </div>
-    {{/each}}
+    {{end}}
   </div>
 </body>
+
 </html>
 ```
 
@@ -94,28 +98,94 @@ Contoh code
 <br />
 
 <div>
-<a class="btn-demo" href="https://ebook-code-result-chapter-2-git-day3-3disp-677d78-demo-dumbways.vercel.app/blog">
+<a class="btn-demo" href="">
 Demo
 </a>
 </div>
 <br />
 
-Kita akan coba juga untuk menampilkan data blog pada halaman **detail blog**, karena data yang dikirim hanya satu atau bertipe **object** maka kita langsung panggil `property name` yang ingin ditampilkan.
+Kita akan coba juga untuk menampilkan data blog pada halaman **detail blog**, pertama kita harus menentukan data yang akan ditampilkan. Hal ini bisa kita tentukan berdasarkan index yang kita dapatkan dari proses looping, sehingga pada file `main.go` bisa kita terima dan kita lakukan filter.
+
 
 <br />
 
-<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2/tree/day3-3.display-data">
+<a class="btn-example-code" href="">
 Contoh code
 </a>
 
 <br />
 <br />
 
-```js {35-42} title=blog-detail.hbs
+```go {15-31} title="main.go"
+// this code same like before
+// this code below func blogs(w http.ResponseWriter, r *http.Request) {
+func blogDetail(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+    id, _ := strconv.Atoi(mux.Vars(r)["id"])
+
+    var tmpl, err = template.ParseFiles("views/blog-detail.html")
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        w.Write([]byte("message : " + err.Error()))
+        return
+    }
+
+    BlogDetail := Blog{}
+
+    for i, data := range Blogs {
+      if i == id {
+        BlogDetail = Blog{
+          Title:     data.Title,
+          Post_date: data.Post_date,
+          Author:    data.Author,
+          Content:   data.Content,
+        }
+      }
+    }
+
+    resp := map[string]interface{}{
+      "Data": Data,
+      "Blog": BlogDetail,
+    }
+
+    w.WriteHeader(http.StatusOK)
+    tmpl.Execute(w, resp)
+}
+
+func formBlog(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	var tmpl, err = template.ParseFiles("views/form-blog.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("message : " + err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	tmpl.Execute(w, Data)
+}
+// continuation this code same like before
+```
+
+
+Maka untuk mengakses data blog detail yang dikirimkan pada halaman `blog-detail.html` sebagai berikut.
+
+<br />
+
+<a class="btn-example-code" href="">
+Contoh code
+</a>
+
+<br />
+<br />
+
+```html {35-44} title="blog-detail.html"
 <html>
 
 <head>
-  <title>Creating Blog Page - detail</title>
+  <title>{{.Data.Title}}</title>
   <link rel="stylesheet" href="/public/style.css" />
   <!-- linking boostrap css cdn  -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -148,10 +218,12 @@ Contoh code
   <!-- Blog -->
   <div class="blog-detail">
     <div class="blog-detail-container">
-      <h1>{{blog.title}}</h1>
-      <div class="author">{{blog.post_date}} | {{blog.author}}</div>
+      <h1>{{.Blog.Title}}</h1>
+      <div class="author"> {{.Blog.Post_date}} | {{.Blog.Author}}</div>
       <img src="/public/assets/blog-img-detail.png" alt="detail" />
-      <p>{{blog.content}}</p>
+      <p>
+        {{.Blog.Content}}
+      </p>
     </div>
   </div>
 </body>
@@ -165,7 +237,7 @@ Contoh code
 <br />
 
 <div>
-<a class="btn-demo" href="https://ebook-code-result-chapter-2-git-day3-3disp-677d78-demo-dumbways.vercel.app/blog/1">
+<a class="btn-demo" href="">
 Demo
 </a>
 </div>

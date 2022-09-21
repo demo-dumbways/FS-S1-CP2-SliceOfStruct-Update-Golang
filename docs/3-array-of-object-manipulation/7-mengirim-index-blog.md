@@ -8,18 +8,18 @@ Pada tag `anchor` yang kita gunakan untuk menghapus blog, kita tambahkan attribu
 
 <br />
 
-<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2/tree/day3-6.query-string-index">
+<a class="btn-example-code" href="">
 Contoh code
 </a>
 
 <br />
 <br />
 
-```html {52} title=blog.hbs
+```html {51,54} title="blog.html"
 <html>
 
 <head>
-  <title>Creating Blog Page</title>
+  <title>{{.Data.Title}}</title>
   <link rel="stylesheet" href="/public/style.css" />
   <!-- linking boostrap css cdn  -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -52,14 +52,13 @@ Contoh code
   <!-- Blog list -->
   <div id="contents" class="blog-list">
     <!-- conditional post blog -->
-    {{#if isLogin}}
+    {{if .Data.IsLogin}}
     <div class="button-group w-100">
       <a href="/add-blog" class="btn-post">Add New Blog</a>
     </div>
-    {{/if}}
+    {{end}}
     <!-- dynamic content would be here -->
-    <!-- using each expression to iterate blogs data sent -->
-    {{#each blogs}}
+    {{range $index, $data := .Blogs}}
     <div class="blog-list-item">
       <div class="blog-image">
         <img src="/public/assets/blog-img.png" alt="Pasar Coding di Indonesia Dinilai Masih Menjanjikan" />
@@ -67,21 +66,25 @@ Contoh code
       <div class="blog-content">
         <div class="button-group">
           <a class="btn-edit">Edit Post</a>
-          <a href="/delete-blog/{{@index}}" class="btn-post">Delete Blog</a>
+          <a class="btn-post" href="/delete-blog/{{$index}}">Delete Blog</a>
         </div>
         <h1>
-          <a href="/blog/{{this.id}}" target="_blank">{{this.title}}</a>
+          <a href="/blog/{{$index}}" target="_blank">
+            {{$data.Title}}
+          </a>
         </h1>
         <div class="detail-blog-content">
-          {{this.post_date}} | {{this.author}}
+          {{$data.Format_date}} | {{$data.Author}}
         </div>
-        <p>{{this.content}}</p>
+        <p>
+          {{$data.Content}}
+        </p>
       </div>
     </div>
-    {{/each}}
+    {{end}}
   </div>
 </body>
+
 </html>
 ```
 
-Handlebars telah menyediakan perintah `@index` yang dapat kita gunakan untuk mengambil data index pada blog tersebut.

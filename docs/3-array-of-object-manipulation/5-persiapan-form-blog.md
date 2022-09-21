@@ -17,7 +17,7 @@ Contoh code
 <br />
 <br />
 
-```html {33,37,41,45,48} title=form-blog.hbs
+```html {33,37,41,45,48} title="form-blog.html"
 <!DOCTYPE html>
 <html>
 

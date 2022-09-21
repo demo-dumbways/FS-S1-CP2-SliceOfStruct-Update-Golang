@@ -2,64 +2,75 @@
 sidebar_position: 3
 ---
 
-# 3. Send data to Handlebars
+# 3. Send data to Template
 
-Kita akan mengirim data yang ada didalam variable **blogs** ke halaman `blog` dan `detail blog` agar pengguna dapat melihat data blog.
+Kita akan mengirim data yang ada didalam variable **Blogs** ke halaman `blog` dan `detail blog` agar pengguna dapat melihat data blog.
 
 <br />
 
-<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2/tree/day3-2.send-data">
+<a class="btn-example-code" href="">
 Contoh code
 </a>
 
 <br />
 <br />
 
-```js {35,41,43} title=index.js
-// this code below app.use("/public", express.static(path.join(__dirname, "../public")));
-app.use(express.urlencoded({ extended: false }))
+```go {26-29,32} title="main.go"
+// this code same like before
+func home(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-const blogs = [
-  {
-    id: 1,
-    title: 'Pasar Coding di Indonesia Dinilai Masih Menjanjikan',
-    post_date: '12 Jul 2021 22:30 WIB',
-    author: 'Ichsan Emrald Alamsyah',
-    content: `Ketimpangan sumber daya manusia (SDM) di sektor digital masih
-    menjadi isu yang belum terpecahkan. Berdasarkan penelitian
-    ManpowerGroup, ketimpangan SDM global, termasuk Indonesia,
-    meningkat dua kali lipat dalam satu dekade terakhir. Lorem ipsum,
-    dolor sit amet consectetur adipisicing elit. Quam, molestiae
-    numquam! Deleniti maiores expedita eaque deserunt quaerat! Dicta,
-    eligendi debitis?`,
-  },
-];
+    var tmpl, err = template.ParseFiles("views/index.html")
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        w.Write([]byte("message : " + err.Error()))
+        return
+    }
 
-app.get('/', function (req, res) {
-    res.send("Hello World")
-})
+    w.WriteHeader(http.StatusOK)
+    tmpl.Execute(w, Data)
+}
 
-app.get('/home', function (req, res) {
-    setHeader(res)
-    res.render('index')
-})
+func blogs(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-const isLogin = true
+    var tmpl, err = template.ParseFiles("views/blog.html")
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        w.Write([]byte("message : " + err.Error()))
+        return
+    }
 
-app.get('/blog', function (req, res) {
-  setHeader(res)
-  res.render('blog', { 
-    isLogin: isLogin, 
-    blogs: blogs 
-  });
-});
+    respData := map[string]interface{}{
+        "Data":  Data,
+        "Blogs": Blogs,
+    }
 
-app.get('/blog/:id', function (req, res) {
-  const blogId = req.params.id;
-  const blog = blogs.find((item) => item.id == blogId);
-  setHeader(res)
-  res.render('blog-detail', { blog });
-});
+    w.WriteHeader(http.StatusOK)
+    tmpl.Execute(w, respData)
+}
+
+func blogDetail(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+    id, _ := strconv.Atoi(mux.Vars(r)["id"])
+
+    var tmpl, err = template.ParseFiles("views/blog-detail.html")
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        w.Write([]byte("message : " + err.Error()))
+        return
+    }
+
+    resp := map[string]interface{}{
+        "Data": Data,
+        "Id":   id,
+    }
+
+    w.WriteHeader(http.StatusOK)
+    tmpl.Execute(w, resp)
+}
+// continuation this code same like before
 ```
 
-Untuk mengirim data ke **handlebars**, kita menambahkan `object` pada parameter kedua **function render**. Kita tambahkan property sesuai dengan data yang dikirim dan valuenya adalah variable yang menyimpan data tersebut, contoh `{blogs: data}`.
+Untuk mengirim data ke **template html**, kita menambahkan `struct` pada parameter kedua **function execute**. Kita tambahkan property sesuai dengan data yang dikirim dan valuenya adalah variable yang menyimpan data tersebut.

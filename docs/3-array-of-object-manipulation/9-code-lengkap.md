@@ -2,112 +2,201 @@
 sidebar_position: 9
 ---
 
-# 9. Full Code Index.JS
-Berikut adalah Full Code pada file `index.js` :
+# 9. Full Code main.go
+Berikut adalah Full Code pada file `main.go` :
 
 <br />
 
-<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2/tree/day3-8.full-code">
+<a class="btn-example-code" href="">
 Contoh code
 </a>
 
 <br />
 <br />
 
-```js title="index.js"
-const express = require('express')
-const path = require("path");
+```go title="main.go"
+package main
 
-const app = express()
+import (
+	"fmt"
+	"html/template"
+	"log"
+	"net/http"
+	"strconv"
+	"time"
 
-app.set('view engine', 'hbs');
-app.set("views", path.join(__dirname, "../views"));
+	"github.com/gorilla/mux"
+)
 
-app.use("/public", express.static(path.join(__dirname, "../public")));
+var Data = map[string]interface{}{
+	"Title": "Personal Web",
+}
 
-app.use(express.urlencoded({ extended: false }))
+type Blog struct {
+	Title     string
+	Post_date string
+	Author    string
+	Content   string
+}
 
-const blogs = [
-    {
-        id: 1,
-        title: 'Pasar Coding di Indonesia Dinilai Masih Menjanjikan',
-        post_date: '12 Jul 2021 22:30 WIB',
-        author: 'Ichsan Emrald Alamsyah',
-        content: `Ketimpangan sumber daya manusia (SDM) di sektor digital masih
-                    menjadi isu yang belum terpecahkan. Berdasarkan penelitian
-                    ManpowerGroup, ketimpangan SDM global, termasuk Indonesia,
-                    meningkat dua kali lipat dalam satu dekade terakhir. Lorem ipsum,
-                    dolor sit amet consectetur adipisicing elit. Quam, molestiae
-                    numquam! Deleniti maiores expedita eaque deserunt quaerat! Dicta,
-                    eligendi debitis?`,
-    },
-];
+var Blogs = []Blog{
+	{
+		Title:     "Pasar Coding di Indonesia Dinilai Masih Menjanjikan",
+		Post_date: "12 Jul 2021 22:30 WIB",
+		Author:    "Ilham Fathullah",
+		Content:   "Test",
+	},
+}
 
-app.get('/', function (req, res) {
-    res.send("Hello World")
-})
+func main() {
+	route := mux.NewRouter()
 
-app.get('/home', function (req, res) {
-    setHeader(res)
-    res.render('index')
-})
+	// static folder
+	route.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("./public/"))))
 
-const isLogin = true
+	// routing
+	route.HandleFunc("/", helloWorld).Methods("GET")
+	route.HandleFunc("/home", home).Methods("GET").Name("home")
+	route.HandleFunc("/blog", blogs).Methods("GET")
+	route.HandleFunc("/blog/{id}", blogDetail).Methods("GET")
+	route.HandleFunc("/add-blog", formBlog).Methods("GET")
+	route.HandleFunc("/blog", addBlog).Methods("POST")
+	route.HandleFunc("/delete-blog/{id}", deleteBlog).Methods("GET")
+	route.HandleFunc("/contact-me", contactMe).Methods("GET")
 
-app.get('/blog', function (req, res) {
-    setHeader(res)
-    res.render('blog', {
-        isLogin: isLogin,
-        blogs: blogs
-    })
-})
+	fmt.Println("Server running on port 5000")
+	http.ListenAndServe("localhost:5000", route)
+}
 
-app.get('/blog/:id', function (req, res) {
-    const blogId = req.params.id
-    const blog = blogs.find((item) => item.id == blogId);
-    setHeader(res)
-    res.render('blog-detail', { blog });
-})
+func helloWorld(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Hello World!"))
+}
 
-app.get('/add-blog', function (req, res) {
-    setHeader(res)
-    res.render("form-blog")
-})
+func home(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-app.post('/blog', function (req, res) {
-    const blog = {
-        title: req.body.title,
-        post_date: '12 Jul 2021 22:30 WIB',
-        author: 'Ichsan Emrald Alamsyah',
-        content: req.body.content,
-    };
+	var tmpl, err = template.ParseFiles("views/index.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("message : " + err.Error()))
+		return
+	}
 
-    blogs.push(blog);
+	w.WriteHeader(http.StatusOK)
+	tmpl.Execute(w, Data)
+}
 
-    res.redirect('/blog');
-})
+func blogs(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	fmt.Println(Blogs)
+	var tmpl, err = template.ParseFiles("views/blog.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("message : " + err.Error()))
+		return
+	}
 
-app.get('/delete-blog/:index', (req, res) => {
-    const index = req.params.index;
+	respData := map[string]interface{}{
+		"Data":  Data,
+		"Blogs": Blogs,
+	}
 
-    blogs.splice(index, 1);
+	w.WriteHeader(http.StatusOK)
+	tmpl.Execute(w, respData)
+}
 
-    setHeader(res)
-    res.redirect('/blog');
-});
+func blogDetail(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-app.get('/contact-me', function (req, res) {
-    setHeader(res)
-    res.render('contact')
-})
+	id, _ := strconv.Atoi(mux.Vars(r)["id"])
 
-const port = 5000
-app.listen(port, function () {
-    console.debug(`Server running on port ${port}`)
-})
+	var tmpl, err = template.ParseFiles("views/blog-detail.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("message : " + err.Error()))
+		return
+	}
 
-function setHeader(res) {
-    res.setHeader("Content-Type", "text/html");
-    res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
+	BlogDetail := Blog{}
+
+	for i, data := range Blogs {
+		if i == id {
+			BlogDetail = Blog{
+				Title:     data.Title,
+				Post_date: data.Post_date,
+				Author:    data.Author,
+				Content:   data.Content,
+			}
+		}
+
+	}
+	resp := map[string]interface{}{
+		"Data": Data,
+		"Blog": BlogDetail,
+	}
+
+	w.WriteHeader(http.StatusOK)
+	tmpl.Execute(w, resp)
+}
+
+func formBlog(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	var tmpl, err = template.ParseFiles("views/form-blog.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("message : " + err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	tmpl.Execute(w, Data)
+}
+
+func addBlog(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	title := r.PostForm.Get("title")
+	content := r.PostForm.Get("content")
+
+	var newBlog = Blog{
+		Title:     title,
+		Post_date: time.Now().String(),
+		Author:    "Ilham Fathullah",
+		Content:   content,
+	}
+
+	Blogs = append(Blogs, newBlog)
+
+	http.Redirect(w, r, "/blog", http.StatusMovedPermanently)
+}
+
+func deleteBlog(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	id, _ := strconv.Atoi(mux.Vars(r)["id"])
+
+	Blogs = append(Blogs[:id], Blogs[id+1:]...)
+
+	http.Redirect(w, r, "/blog", http.StatusMovedPermanently)
+}
+
+func contactMe(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	var tmpl, err = template.ParseFiles("views/contact.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("message : " + err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	tmpl.Execute(w, Data)
 }
 ```

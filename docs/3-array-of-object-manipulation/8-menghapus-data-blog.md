@@ -10,41 +10,61 @@ Kita perlu membuat sebuah route untuk menangani proses menghapus data blog.
 
 <br />
 
-<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2/tree/day3-7.delete-blog-data">
+<a class="btn-example-code" href="">
 Contoh code
 </a>
 
 <br />
 <br />
 
-```js {15-22} title=index.js
-// this code below endpoint app.get('/add-blog' ......
-app.post('/blog', function (req, res) {
-    const blog = {
-        title: req.body.title,
-        post_date: '12 Jul 2021 22:30 WIB',
-        author: 'Ichsan Emrald Alamsyah',
-        content: req.body.content,
-    };
+```go {16,25-33} title="main.go"
+// continuation this code same like before
+// this code below var Blogs = []Blog{
+func main() {
+	route := mux.NewRouter()
 
-    blogs.push(blog);
+	// static folder
+	route.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("./public/"))))
 
-    res.redirect('/blog');
-})
+	// routing
+	route.HandleFunc("/", helloWorld).Methods("GET")
+	route.HandleFunc("/home", home).Methods("GET").Name("home")
+	route.HandleFunc("/blog", blogs).Methods("GET")
+	route.HandleFunc("/blog/{id}", blogDetail).Methods("GET")
+	route.HandleFunc("/add-blog", formBlog).Methods("GET")
+	route.HandleFunc("/blog", addBlog).Methods("POST")
+	route.HandleFunc("/delete-blog/{id}", deleteBlog).Methods("GET")
+	route.HandleFunc("/contact-me", contactMe).Methods("GET")
 
-app.get('/delete-blog/:index', (req, res) => {
-    const index = req.params.index;
+	fmt.Println("Server running on port 5000")
+	http.ListenAndServe("localhost:5000", route)
+}
 
-    blogs.splice(index, 1);
+// continuation this code same like before
+// this code below func addBlog(w http.ResponseWriter, r *http.Request) {
+func deleteBlog(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-    setHeader(res)
-    res.redirect('/blog');
-});
+	id, _ := strconv.Atoi(mux.Vars(r)["id"])
 
-app.get('/contact-me', function (req, res) {
-    setHeader(res)
-    res.render('contact')
-})
+	Blogs = append(Blogs[:id], Blogs[id+1:]...)
+
+	http.Redirect(w, r, "/blog", http.StatusMovedPermanently)
+}
+
+func contactMe(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	var tmpl, err = template.ParseFiles("views/contact.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("message : " + err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	tmpl.Execute(w, Data)
+}
 ```
 <img alt="image1" src={useBaseUrl('img/docs/image-3-2.png')} height="500px"/>
 
@@ -52,12 +72,12 @@ app.get('/contact-me', function (req, res) {
 <br />
 
 <div>
-<a class="btn-demo" href="https://ebook-code-result-chapter-2-git-day3-7dele-05c1ec-demo-dumbways.vercel.app/blog">
+<a class="btn-demo" href="">
 Demo
 </a>
 </div>
 <br />
 
-Nama route yang kita gunakan untuk menghandle proses menghapus data blog yaitu `/delete-blog`, kemudian diikuti `/:index` agar kita dapat menangkap `index` yang dikirim melalui route/url. Untuk mengambil `index` yang dikirim, kita gunakan `req.params.index`, jadi index tersebut tersimpan didalam `req.params`.
+Nama route yang kita gunakan untuk menghandle proses menghapus data blog yaitu `/delete-blog`, kemudian diikuti `/{index}` agar kita dapat menangkap `index` yang dikirim melalui route/url. Untuk mengambil `index` yang dikirim, kita gunakan `mux.Vars(r)["id"]`, jadi index tersebut tersimpan didalam `request`.
 
-Setelah mendapatkan value `index`, kita tampung dalam sebuah variable `index`. Kita menggunakan function `splice`, didalam function `splice` terdapat dua parameter, parameter **pertama** berisikan `index` yang ingin dihapus, parameter **kedua** berisikan jumlah data yang ingin dihapus. Karena hanya satu data blog yang ingin kita hapus, maka di parameter kedua kita isikan value `1`. Kemudian kita gunakan perintah `redirect` agar pengguna dapat diarahkan ke route yang telah diatur, contoh: kembali ke halaman blog `res.redirect('/blog')`
+Setelah mendapatkan value `index`, kita tampung dalam sebuah variable `id`. Menghapus data kita menggunakan cara dengan mereplace seluruh data yang ada dalam `slice Blogs` dengan data selain data yang dihapus. Kemudian kita gunakan perintah `redirect` agar pengguna dapat diarahkan ke route yang telah diatur, contoh: kembali ke halaman blog `http.Redirect(w, r, "/blog", http.StatusMovedPermanently)`

@@ -8,7 +8,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 ## 10.1 Instruksi
 
-Setelah mempelajari & mempraktikan `array of object manipulation` maka tugas kalian adalah mengimplementasikan hal tersebut pada task, ruang lingkup pada tugas adalah :
+Setelah mempelajari & mempraktikan `struct interface manipulation` maka tugas kalian adalah mengimplementasikan hal tersebut pada task, ruang lingkup pada tugas adalah :
 
 1. Add Data Project
 2. Fetch Data Project
@@ -19,18 +19,18 @@ Setelah mempelajari & mempraktikan `array of object manipulation` maka tugas kal
 ## 10.2 Pengumpulan
 
 - Setelah menyelesaikan tugas, silakan push pekerjaan Anda ke repository dengan cara
-- Membuat branch `day-3-array-of-object-manipulation`.
+- Membuat branch `day-3-struct-interface-manipulation`.
 
   ```
-  git checkout -b day-3-array-of-object-manipulation
+  git checkout -b day-3-struct-interface-manipulation
   ```
 
-- Push ke branch `day-3-array-of-object-manipulation`.
+- Push ke branch `day-3-struct-interface-manipulation`.
 
   ```
   git add .
-  git commit -m "Array Of Object Manipulation"
-  git push origin day-3-array-of-object-manipulation
+  git commit -m "struct interface Manipulation"
+  git push origin day-3-struct-interface-manipulation
   ```
 
 Referensi:
@@ -50,7 +50,7 @@ Referensi:
 Tambahkan deskripsi berikut ke dalam kanban pada project management Anda
 
 ```text
-Implementasikan Array of Object Manipulation. Berikut list task dalam membuat card:
+Implementasikan struct interface Manipulation. Berikut list task dalam membuat card:
 
 - [ ] Add Data Project
 - [ ] Fetch Data Project
@@ -71,4 +71,4 @@ Referensi:
 
 ## 10.5 Diskusi
 
-Silakan diskusikan terkait kendala atau kesulitan selama pembelajaran pada platform diskusi `(slack/link.ink)` dengan membuat thread, misalnya `"Day 3 Array of Object Manipulation: problem path image"`
+Silakan diskusikan terkait kendala atau kesulitan selama pembelajaran pada platform diskusi `(slack/link.ink)` dengan membuat thread, misalnya `"Day 3 struct interface Manipulation: problem path image"`
