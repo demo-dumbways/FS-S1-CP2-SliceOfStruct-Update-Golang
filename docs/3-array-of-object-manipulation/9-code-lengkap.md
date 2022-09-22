@@ -30,6 +30,7 @@ import (
 
 var Data = map[string]interface{}{
 	"Title": "Personal Web",
+	"IsLogin": false,
 }
 
 type Blog struct {
