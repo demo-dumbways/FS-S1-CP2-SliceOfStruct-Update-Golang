@@ -12,14 +12,14 @@ Menampilkan data pada **Template HTML** kita menggunakan **double curly brackets
 
 <br />
 
-<a class="btn-example-code" href="">
+<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2-golang/blob/day3-3-showing-data-blog/views/blog.html">
 Contoh code
 </a>
 
 <br />
 <br />
 
-```html {43-66} title="blog.html"
+```html {43-68} title="blog.html"
 <html>
 
 <head>
@@ -68,17 +68,19 @@ Contoh code
         <img src="/public/assets/blog-img.png" alt="Pasar Coding di Indonesia Dinilai Masih Menjanjikan" />
       </div>
       <div class="blog-content">
+        {{if $.Data.IsLogin}}
         <div class="button-group">
           <a class="btn-edit">Edit Post</a>
           <a class="btn-post">Delete Blog</a>
         </div>
+        {{end}}
         <h1>
           <a href="/blog/1" target="_blank">
             {{$data.Title}}
           </a>
         </h1>
         <div class="detail-blog-content">
-          {{$data.Format_date}} | {{$data.Author}}
+          {{$data.Post_date}} | {{$data.Author}}
         </div>
         <p>
           {{$data.Content}}
@@ -109,7 +111,7 @@ Kita akan coba juga untuk menampilkan data blog pada halaman **detail blog**, pe
 
 <br />
 
-<a class="btn-example-code" href="">
+<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2-golang/blob/day3-3-showing-data-blog/main.go">
 Contoh code
 </a>
 
@@ -174,7 +176,7 @@ Maka untuk mengakses data blog detail yang dikirimkan pada halaman `blog-detail.
 
 <br />
 
-<a class="btn-example-code" href="">
+<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2-golang/blob/day3-3-showing-data-blog/views/blog-detail.html">
 Contoh code
 </a>
 

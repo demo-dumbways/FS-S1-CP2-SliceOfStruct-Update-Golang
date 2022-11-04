@@ -20,17 +20,18 @@ Dengan memanfaatkan struct, grouping data akan lebih mudah, selain itu dan rapi 
 
 <br />
 
-<a class="btn-example-code" href="">
+<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2-golang/blob/day3-1-struct-declaration/main.go">
 Contoh code
 </a>
 
 <br />
 <br />
 
-```go {6-26} title="main.go"
+```go {7-27} title="main.go"
 // this code same like before
 var Data = map[string]interface{}{
 	"Title": "Personal Web",
+	"IsLogin": false,
 }
 
 type Blog struct {

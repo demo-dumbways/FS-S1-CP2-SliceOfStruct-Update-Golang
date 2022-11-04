@@ -7,7 +7,7 @@ Berikut adalah Full Code pada file `main.go` :
 
 <br />
 
-<a class="btn-example-code" href="">
+<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2-golang/blob/day3-8-full-code/main.go">
 Contoh code
 </a>
 

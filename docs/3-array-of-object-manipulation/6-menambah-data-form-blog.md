@@ -10,7 +10,7 @@ Setelah pengguna mengirim data dari form blog, kita mengumpulkan semua data ters
 
 <br />
 
-<a class="btn-example-code" href="">
+<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2-golang/blob/day3-5-store-data-form-blog/main.go">
 Contoh code
 </a>
 

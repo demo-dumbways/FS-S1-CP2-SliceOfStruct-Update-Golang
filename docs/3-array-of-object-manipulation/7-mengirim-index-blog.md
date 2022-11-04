@@ -8,7 +8,7 @@ Pada tag `anchor` yang kita gunakan untuk menghapus blog, kita tambahkan attribu
 
 <br />
 
-<a class="btn-example-code" href="">
+<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2-golang/blob/day3-6-query-string-index/views/blog.html">
 Contoh code
 </a>
 

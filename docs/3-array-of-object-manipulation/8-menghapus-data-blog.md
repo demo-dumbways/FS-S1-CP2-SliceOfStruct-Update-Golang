@@ -10,7 +10,7 @@ Kita perlu membuat sebuah route untuk menangani proses menghapus data blog.
 
 <br />
 
-<a class="btn-example-code" href="">
+<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2-golang/blob/day3-7-delete-blog-data/main.go">
 Contoh code
 </a>
 

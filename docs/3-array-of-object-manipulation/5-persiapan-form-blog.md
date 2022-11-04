@@ -10,7 +10,7 @@ Untuk menambahkan data blog kita perlu mempersiapkan form yang digunakan untuk m
 
 <br />
 
-<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2/tree/day3-4.prepare-form">
+<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2-golang/blob/day3-4-adding-form-blog-method/views/form-blog.html">
 Contoh code
 </a>
 

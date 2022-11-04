@@ -8,7 +8,7 @@ Kita akan mengirim data yang ada didalam variable **Blogs** ke halaman `blog` da
 
 <br />
 
-<a class="btn-example-code" href="">
+<a class="btn-example-code" href="https://github.com/demo-dumbways/ebook-code-result-chapter-2-golang/blob/day3-2-send-data-to-template/main.go">
 Contoh code
 </a>
 
